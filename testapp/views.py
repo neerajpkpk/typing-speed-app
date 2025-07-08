@@ -48,6 +48,8 @@ def default_text_view(request):
 
 from django.core.management import call_command
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+
 
 def setup_view(request):
     # Run migrations
