@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Add this to home.html <head> -->
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing Test - Pro Version</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    
+        
+  :root {
+    --bg-color: #f9f9f9;
+    --container-bg: #ffffff;
+    --text-color: #2c3e50;
+    --wordbox-bg: #f2f6fc;
+    --accent-color: #4b7bec;
+    --btn-hover: #3867d6;
+    --correct: #27ae60;
+    --incorrect: #e74c3c;
+    --active-bg: #d0ebff;
+    --shadow: rgba(0, 0, 0, 0.1);
+  }
+
+  body.dark-mode {
+    --bg-color: #1e1e2f;
+    --container-bg: #2e2e3e;
+    --text-color: #f1f1f1;
+    --wordbox-bg: #3b3b4e;
+    --accent-color: #8ab4f8;
+    --btn-hover: #5a9df8;
+    --correct: #34d399;
+    --incorrect: #f87171;
+    --active-bg: #4c4c6a;
+    --shadow: rgba(0, 0, 0, 0.5);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .container {
+    background-color: var(--container-bg);
+    padding: 40px;
+    border-radius: 24px;
+    max-width: 850px;
+    width: 100%;
+    box-shadow: 0 12px 28px var(--shadow);
+    transition: background 0.3s ease-in-out;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+  }
+
+  #word-box {
+    background-color: var(--wordbox-bg);
+    padding: 24px;
+    border-radius: 18px;
+    min-height: 130px;
+    font-size: 20px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+    overflow-wrap: break-word;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+    transition: background 0.3s;
+  }
+
+  .word {
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .active {
+    background-color: var(--active-bg);
+    font-weight: bold;
+  }
+
+  .correct {
+    color: var(--correct);
+  }
+
+  .incorrect {
+    color: var(--incorrect);
+  }
+
+  #input-box {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 2px solid #dcdde1;
+    margin-bottom: 25px;
+    outline: none;
+    background-color: inherit;
+    color: inherit;
+    transition: border-color 0.3s;
+  }
+
+  #input-box:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(75, 123, 236, 0.2);
+  }
+
+  #stats {
+    font-size: 18px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background-color: var(--btn-hover);
+  }
+
+  select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    #word-box {
+      font-size: 18px;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    #stats {
+      font-size: 16px;
+    }
+
+    button {
+      font-size: 15px;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <body class="dark-mode">
+
+
+   
+    
+
+  <div class="container">
+ <!-- ✅ Theme Toggle + Use Your Own Text Buttons -->
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  <div>
+    <button id="theme-toggle" onclick="toggleTheme()">🌙 Light Mode</button>
+  </div>
+
+  <div>
+    <a href="{% url 'custom_text' %}">
+      <button>🧾 Use Your Own Text</button>
+    </a>
+  </div>
+</div>
+
+<!-- ✅ Test Title (Centered) -->
+<h2 style="text-align: center; margin-bottom: 25px;">
+  ⌨️ Typing Test (Difficulty: {{ difficulty|title }})
+</h2>
+
+<!-- ✅ Duration Dropdown (Centered) -->
+<div style="text-align: center; margin-bottom: 25px;">
+  <label for="duration">⏱️ Select Duration:</label>
+  <select id="duration" onchange="setDuration(this.value)">
+    <option value="60" selected>1 Minute</option>
+    <option value="120">2 Minutes</option>
+    <option value="300">5 Minutes</option>
+  </select>
+</div>
+
+
+    <div id="word-box"></div>
+
+    <input type="text" id="input-box" placeholder="Start typing..." oninput="handleTyping()" disabled />
+
+    <div id="stats">
+      ⏳ Time Left: <span id="timer">60</span> sec |
+      🚀 WPM: <span id="wpm">0</span> |
+      🎯 Accuracy: <span id="accuracy">0%</span>
+    </div>
+
+    <button onclick="restartTest()">🔁 Restart</button>
+  </div>
+
+  <script>
+   
+  const defaultText = `{{ paragraph|escapejs }}`;
+  const words = defaultText.split(/\s+/);  // same logic as before
+
+
+    let wordElements = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let totalTyped = 0;
+    let totalTime = 60;
+    let timer = totalTime;
+    let interval = null;
+    let started = false;
+
+    function setDuration(value) {
+      totalTime = parseInt(value);
+      restartTest();
+    }
+
+    function generateWords(count = 50) {
+      const wordBox = document.getElementById("word-box");
+      wordBox.innerHTML = "";
+      wordElements = [];
+
+      for (let i = 0; i < count; i++) {
+        const word = words[Math.floor(Math.random() * words.length)];
+        const span = document.createElement("span");
+        span.innerText = word;
+        span.className = "word";
+        wordBox.appendChild(span);
+        wordBox.append(" ");
+        wordElements.push(span);
+      }
+
+      currentIndex = 0;
+      wordElements[0].classList.add("active");
+    }
+
+    function loadNextParagraph() {
+      generateWords();
+    }
+
+    function handleTyping() {
+      const inputBox = document.getElementById("input-box");
+      const input = inputBox.value;
+
+      if (!started) {
+        started = true;
+        startTimer();
+      }
+
+      if (input.endsWith(" ")) {
+        const typedWord = input.trim();
+        const actualWord = wordElements[currentIndex].innerText;
+
+        if (typedWord === actualWord) {
+          wordElements[currentIndex].classList.add("correct");
+          correctCount++;
+        } else {
+          wordElements[currentIndex].classList.add("incorrect");
+        }
+
+        wordElements[currentIndex].classList.remove("active");
+        currentIndex++;
+        totalTyped++;
+
+        if (currentIndex < wordElements.length) {
+          wordElements[currentIndex].classList.add("active");
+        } else {
+          loadNextParagraph(); // Load more words if finished
+        }
+
+        inputBox.value = "";
+        updateStats();
+      }
+    }
+
+    function updateStats() {
+      const timeElapsed = totalTime - timer;
+      let wpm = 0;
+
+      if (timeElapsed > 0) {
+        wpm = Math.round((correctCount / timeElapsed) * 60);
+      }
+
+      const accuracy = totalTyped > 0
+        ? Math.round((correctCount / totalTyped) * 100)
+        : 0;
+
+      document.getElementById("wpm").textContent = wpm;
+      document.getElementById("accuracy").textContent = accuracy + "%";
+    }
+
+    function startTimer() {
+      interval = setInterval(() => {
+        timer--;
+        document.getElementById("timer").textContent = timer;
+        updateStats();
+
+        if (timer === 0) {
+          clearInterval(interval);
+          document.getElementById("input-box").disabled = true;
+        }
+      }, 1000);
+    }
+
+    function restartTest() {
+      clearInterval(interval);
+      timer = totalTime;
+      correctCount = 0;
+      totalTyped = 0;
+      started = false;
+
+      document.getElementById("timer").textContent = timer;
+      document.getElementById("wpm").textContent = "0";
+      document.getElementById("accuracy").textContent = "0%";
+      document.getElementById("input-box").value = "";
+      document.getElementById("input-box").disabled = false;
+      document.getElementById("input-box").focus();
+
+      generateWords();
+    }
+
+    // Start on page load
+    generateWords();
+    document.getElementById("input-box").disabled = false;
+    document.getElementById("input-box").focus();
+  </script>
+<script>
+  function toggleTheme() {
+    const body = document.body;
+    const toggleBtn = document.getElementById("theme-toggle");
+
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+      toggleBtn.textContent = "☀️ Light Mode";
+    } else {
+      toggleBtn.textContent = "🌙 Dark Mode";
+    }
+  }
+</script>
+
+
+</body>
+</html>
