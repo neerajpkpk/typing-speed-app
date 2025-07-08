@@ -12,6 +12,5 @@ urlpatterns = [
     path("robots.txt", TemplateView.as_view(template_name="testapp/robots.txt", content_type="text/plain")),
     path("googlec47f5d51e638c428.html", TemplateView.as_view(template_name="googlec47f5d51e638c428.html", content_type="text/html")),
 
-    # Setup route (for deployment setup view)
-    path('setup/', views.setup_view, name='setup'),
+    
 ]
