@@ -1,0 +1,13 @@
+@"
+services:
+  - type: web
+    name: typing-speed-app
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn typing_project.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: typing_project.settings
+      - key: PYTHON_VERSION
+        value: 3.11.3
+"@ | Out-File -Encoding UTF8 render.yaml
