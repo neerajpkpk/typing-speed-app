@@ -51,12 +51,14 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 
-def setup_view(request):
     # Run migrations
+
+
+def setup_view(request):
     call_command('migrate')
+    if not User.objects.filter(username="neerajtypingapp").exists():
+        User.objects.create_superuser("neerajtypingapp", "neerajyes05@example.com", "Asdf#123456")
+        return HttpResponse("✅ Superuser created")
+    else:
+        return HttpResponse("⚠️ Superuser already exists")
 
-    # Create superuser if not exists
-    if not User.objects.filter(username='neerajguptaji').exists():
-        User.objects.create_superuser('neerajguptaji', 'neerajyes05@gmail.com', 'Asdf#123456')
-
-    return HttpResponse("✔️ Migration done and superuser created.")
