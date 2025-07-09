@@ -46,19 +46,9 @@ def default_text_view(request):
 
 
 
-from django.core.management import call_command
-from django.contrib.auth.models import User
-from django.http import HttpResponse
+
 
 
     # Run migrations
 
-
-def setup_view(request):
-    call_command('migrate')
-    if not User.objects.filter(username="neerajtypingapp").exists():
-        User.objects.create_superuser("neerajtypingapp", "neerajyes05@example.com", "Asdf#123456")
-        return HttpResponse("✅ Superuser created")
-    else:
-        return HttpResponse("⚠️ Superuser already exists")
 
