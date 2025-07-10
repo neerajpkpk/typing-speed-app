@@ -238,68 +238,72 @@
     let interval = null;
     let started = false;
 
+    let fullWordIndex = 0; // track kaha tak load hua
+    const batchSize = 50;  // ek baar me kitne words dikhaye
+
     function setDuration(value) {
       totalTime = parseInt(value);
       restartTest();
     }
+ function generateWords() {
+  const wordBox = document.getElementById("word-box");
+  wordBox.innerHTML = "";
+  wordElements = [];
 
-    function generateWords(count = 50) {
-      const wordBox = document.getElementById("word-box");
-      wordBox.innerHTML = "";
-      wordElements = [];
+  // Load next batch of 50 words
+  for (let i = 0; i < batchSize && fullWordIndex < words.length; i++, fullWordIndex++) {
+    const word = words[fullWordIndex];
+    const span = document.createElement("span");
+    span.innerText = word;
+    span.className = "word";
+    wordBox.appendChild(span);
+    wordBox.append(" ");
+    wordElements.push(span);
+  }
 
-      for (let i = 0; i < count; i++) {
-        const word = words[Math.floor(Math.random() * words.length)];
-        const span = document.createElement("span");
-        span.innerText = word;
-        span.className = "word";
-        wordBox.appendChild(span);
-        wordBox.append(" ");
-        wordElements.push(span);
-      }
+  currentIndex = 0;
+  if (wordElements.length > 0) {
+    wordElements[0].classList.add("active");
+  }
+}
 
-      currentIndex = 0;
-      wordElements[0].classList.add("active");
+
+
+  function handleTyping() {
+  const inputBox = document.getElementById("input-box");
+  const input = inputBox.value;
+
+  if (!started) {
+    started = true;
+    startTimer();
+  }
+
+  if (input.endsWith(" ")) {
+    const typedWord = input.trim();
+    const actualWord = wordElements[currentIndex].innerText;
+
+    if (typedWord === actualWord) {
+      wordElements[currentIndex].classList.add("correct");
+      correctCount++;
+    } else {
+      wordElements[currentIndex].classList.add("incorrect");
     }
 
-    function loadNextParagraph() {
+    wordElements[currentIndex].classList.remove("active");
+    currentIndex++;
+    totalTyped++;
+
+    // 👇 Load next 50 when batch ends
+    if (currentIndex < wordElements.length) {
+      wordElements[currentIndex].classList.add("active");
+    } else if (fullWordIndex < words.length) {
       generateWords();
     }
 
-    function handleTyping() {
-      const inputBox = document.getElementById("input-box");
-      const input = inputBox.value;
-
-      if (!started) {
-        started = true;
-        startTimer();
-      }
-
-      if (input.endsWith(" ")) {
-        const typedWord = input.trim();
-        const actualWord = wordElements[currentIndex].innerText;
-
-        if (typedWord === actualWord) {
-          wordElements[currentIndex].classList.add("correct");
-          correctCount++;
-        } else {
-          wordElements[currentIndex].classList.add("incorrect");
-        }
-
-        wordElements[currentIndex].classList.remove("active");
-        currentIndex++;
-        totalTyped++;
-
-        if (currentIndex < wordElements.length) {
-          wordElements[currentIndex].classList.add("active");
-        } else {
-          loadNextParagraph(); // Load more words if finished
-        }
-
-        inputBox.value = "";
-        updateStats();
-      }
-    }
+    inputBox.value = "";
+    updateStats();
+  }
+}
 
     function updateStats() {
       const timeElapsed = totalTime - timer;
